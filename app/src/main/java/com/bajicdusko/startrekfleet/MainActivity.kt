@@ -1,63 +1,41 @@
 package com.bajicdusko.startrekfleet
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.databinding.DataBindingUtil
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.room.Room
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bajicdusko.androiddomain.ResponseWrapper
 import com.bajicdusko.androiddomain.model.ShipClass
-import com.bajicdusko.androiddomain.repository.ShipClassRepository
-import com.bajicdusko.data.api.StarTrekFleetApi
-import com.bajicdusko.data.db.FleetDatabase
-import com.bajicdusko.data.interactor.GetShipClasses
-import com.bajicdusko.data.repository.ApiShipClassRepository
-import com.bajicdusko.data.repository.DbShipClassRepository
-import com.bajicdusko.startrekfleet.databinding.ActivityMainBinding
-import com.bajicdusko.startrekfleet.viewmodel.ShipClassesViewModel
-import com.bajicdusko.startrekfleet.viewmodel.ViewModelFactory
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.bajicdusko.startrekfleet.base.ViewModelFactory
+import com.bajicdusko.startrekfleet.ship.ShipClassActivity
+import com.bajicdusko.startrekfleet.shipclass.ShipClassAdapter
+import com.bajicdusko.startrekfleet.shipclass.ShipClassesViewModel
+import org.jetbrains.anko.startActivity
+import kotlinx.android.synthetic.main.activity_main.activity_main_shipclasses as shipClassesList
 
 class MainActivity : AppCompatActivity() {
 
   val tag = this::class.java.simpleName
-  lateinit var shipClassesViewModel: ShipClassesViewModel
-  lateinit var binding: ActivityMainBinding
+  private lateinit var shipClassesViewModel: ShipClassesViewModel
+  private lateinit var shipClassesAdapter: ShipClassAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+    setContentView(R.layout.activity_main)
 
-    initGetShipClasses()
     shipClassesViewModel = ViewModelFactory().create(ShipClassesViewModel::class.java)
     lifecycle.addObserver(shipClassesViewModel)
 
+    shipClassesList.apply {
+      layoutManager = LinearLayoutManager(this@MainActivity)
+      adapter = ShipClassAdapter().also {
+        shipClassesAdapter = it
+        it.listener = this@MainActivity
+      }
+    }
+
     observeChanges()
-    binding.temp = "Huhu"
-  }
-
-  private fun initGetShipClasses() {
-
-    val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-        .build()
-
-    val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://test.com")
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(okHttpClient)
-        .build()
-
-    val api = retrofit.create(StarTrekFleetApi::class.java)
-
-    val fleetDatabase = Room.databaseBuilder(this, FleetDatabase::class.java, "fleet").build()
-    val dbShipClassRepository = DbShipClassRepository(fleetDatabase.shipClasssDao())
-    val shipClassesRepository: ShipClassRepository = ApiShipClassRepository(api, dbShipClassRepository)
-    ViewModelFactory.shipClasses = GetShipClasses(shipClassesRepository)
   }
 
   private fun observeChanges() {
@@ -67,18 +45,24 @@ class MainActivity : AppCompatActivity() {
   private fun renderResult(result: ResponseWrapper<List<ShipClass>>?) {
     result?.let {
       if (it.error != null){
-        renderError(it.error!!)
+        onError(it.error!!)
       } else {
-        renderData(it.data)
+        onData(it.data)
       }
     }
   }
 
-  private fun renderData(data: List<ShipClass>?) {
-    Log.d(tag, data.toString())
+  fun showShips(shipClass: ShipClass){
+    startActivity<ShipClassActivity>("shipClass" to shipClass)
   }
 
-  private fun renderError(error: Throwable) {
+  private fun onData(data: List<ShipClass>?) {
+    data?.let {
+      shipClassesAdapter.loadData(it)
+    } ?: shipClassesAdapter.clearData()
+  }
+
+  private fun onError(error: Throwable) {
     Log.e(tag, "On ship classes loading", error)
   }
 

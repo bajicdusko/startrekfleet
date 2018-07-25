@@ -42,6 +42,8 @@ dependencies {
   implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
   kapt 'com.android.databinding:compiler:3.2.0-alpha10'
 
+  implementation "org.jetbrains.anko:anko-commons:$anko_version"
+
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
   api project(':data')

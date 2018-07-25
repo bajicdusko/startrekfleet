@@ -11,5 +11,5 @@ import androidx.room.RoomDatabase
 @Database(entities = [ShipsDb::class, ShipClassDb::class], version = 1)
 abstract class FleetDatabase : RoomDatabase() {
   abstract fun shipsDao(): ShipsDao
-  abstract fun shipClasssDao(): ShipClassDao
+  abstract fun shipClassDao(): ShipClassDao
 }

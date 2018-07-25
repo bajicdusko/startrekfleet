@@ -1,7 +1,11 @@
 package com.bajicdusko.androiddomain.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 /**
  * Created by Dusko Bajic on 22.07.18.
  * GitHub @bajicdusko
  */
-data class ShipClass(val name: String)
+@Parcelize
+data class ShipClass(val name: String) : Parcelable
