@@ -1,5 +1,6 @@
 package com.bajicdusko.data.repository
 
+import androidx.annotation.VisibleForTesting
 import androidx.arch.core.util.Function
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
