@@ -8,9 +8,11 @@ class BaseViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHo
 
   fun bind(any: Any, listeners: Any?){
     binding.setVariable(BR.any, any)
+
     listeners?.let {
       binding.setVariable(BR.listener, listeners)
     }
+
     binding.executePendingBindings()
   }
 }

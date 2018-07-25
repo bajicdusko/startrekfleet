@@ -3,7 +3,9 @@ package com.bajicdusko.startrekfleet
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bajicdusko.androiddomain.ResponseWrapper
 import com.bajicdusko.androiddomain.model.ShipClass
@@ -25,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     setContentView(R.layout.activity_main)
 
     shipClassesViewModel = ViewModelFactory().create(ShipClassesViewModel::class.java)
-    lifecycle.addObserver(shipClassesViewModel)
 
     shipClassesList.apply {
       layoutManager = LinearLayoutManager(this@MainActivity)
@@ -34,11 +35,10 @@ class MainActivity : AppCompatActivity() {
         it.listener = this@MainActivity
       }
     }
-
-    observeChanges()
   }
 
-  private fun observeChanges() {
+  override fun onStart() {
+    super.onStart()
     shipClassesViewModel.onLoad().observe(this, Observer { renderResult(it) })
   }
 
@@ -64,10 +64,5 @@ class MainActivity : AppCompatActivity() {
 
   private fun onError(error: Throwable) {
     Log.e(tag, "On ship classes loading", error)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    lifecycle.removeObserver(shipClassesViewModel)
   }
 }

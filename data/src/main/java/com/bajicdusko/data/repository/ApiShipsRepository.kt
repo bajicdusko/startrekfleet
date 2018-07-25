@@ -26,9 +26,9 @@ class ApiShipsRepository constructor(private val starTrekFleetApi: StarTrekFleet
 
         Transformations.map(getAllShips()) { responseWrapper ->
           if (responseWrapper.error != null) {
-            wrappedData { responseWrapper.data?.get(shipClass.name) ?: emptyList() }
-          } else {
             wrappedError { responseWrapper.error!! }
+          } else {
+            wrappedData { responseWrapper.data?.get(shipClass.name) ?: emptyList() }
           }
         }
       } else {
@@ -49,7 +49,7 @@ class ApiShipsRepository constructor(private val starTrekFleetApi: StarTrekFleet
       }
     }
 
-    appCallback.execute<Map<String, List<Ship>>>(starTrekFleetApi.getWholeCollection())
+    appCallback.execute(starTrekFleetApi.getWholeCollection())
     return responseLiveData
   }
 

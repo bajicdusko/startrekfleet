@@ -17,15 +17,15 @@ class ShipClassActivity : AppCompatActivity() {
   val tag = this::class.java.simpleName
   private lateinit var shipsViewModel: ShipsViewModel
   private lateinit var shipsAdapter: ShipsAdapter
+  private lateinit var shipClass: ShipClass
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_ship_class)
 
-    val shipClass = intent.getParcelableExtra<ShipClass>("shipClass")
+    shipClass = intent.getParcelableExtra<ShipClass>("shipClass")
 
     shipsViewModel = ViewModelFactory().create(ShipsViewModel::class.java)
-    lifecycle.addObserver(shipsViewModel)
 
     shipsList.apply {
       layoutManager = LinearLayoutManager(this@ShipClassActivity)
@@ -33,11 +33,10 @@ class ShipClassActivity : AppCompatActivity() {
         shipsAdapter = it
       }
     }
-
-    load(shipClass)
   }
 
-  private fun load(shipClass: ShipClass) {
+  override fun onStart() {
+    super.onStart()
     shipsViewModel.loadShipsPerShipClass(shipClass).observe(this, Observer { onResult(it) })
   }
 
@@ -59,10 +58,5 @@ class ShipClassActivity : AppCompatActivity() {
 
   private fun onError(error: Throwable) {
     Log.e(tag, "On loading ships per ship class", error)
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    lifecycle.removeObserver(shipsViewModel)
   }
 }

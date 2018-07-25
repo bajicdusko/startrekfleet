@@ -10,8 +10,7 @@ import com.bajicdusko.data.interactor.GetShipClasses
  * Created by Dusko Bajic on 24.07.18.
  * GitHub @bajicdusko
  */
-class ShipClassesViewModel(private val getShipClasses: GetShipClasses) : ViewModel(), LifecycleObserver {
+class ShipClassesViewModel(private val getShipClasses: GetShipClasses) : ViewModel() {
 
-  @OnLifecycleEvent(Lifecycle.Event.ON_START)
   fun onLoad() = getShipClasses.buildUseCase(Unit)
 }

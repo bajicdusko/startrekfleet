@@ -7,8 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.bajicdusko.androiddomain.model.ShipClass
 import com.bajicdusko.data.interactor.GetShipsPerShipClass
 
-class ShipsViewModel(private val getShipsPerShipClass: GetShipsPerShipClass) : ViewModel(), LifecycleObserver {
+class ShipsViewModel(private val getShipsPerShipClass: GetShipsPerShipClass) : ViewModel() {
 
-  @OnLifecycleEvent(Lifecycle.Event.ON_START)
   fun loadShipsPerShipClass(shipClass: ShipClass) = getShipsPerShipClass.buildUseCase(shipClass)
 }
