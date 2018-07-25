@@ -1,8 +1,9 @@
 package com.bajicdusko.data.api
 
-import com.bajicdusko.domain.model.Ship
-import com.bajicdusko.domain.model.ShipClass
+import com.bajicdusko.androiddomain.model.Ship
+import com.bajicdusko.androiddomain.model.ShipClass
 import retrofit2.Call
+import retrofit2.http.GET
 import retrofit2.http.Url
 
 /**
@@ -14,7 +15,9 @@ private const val wholeCollectionUrl = "https://gist.githubusercontent.com/bajic
 
 interface StarTrekFleetApi {
 
+  @GET
   fun getShipClasses(@Url url: String = shipClassesUrl): Call<List<ShipClass>>
 
+  @GET
   fun getWholeCollection(@Url url: String = wholeCollectionUrl) : Call<Map<String, List<Ship>>>
 }

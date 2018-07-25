@@ -1,6 +1,7 @@
 package com.bajicdusko.data.db
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.bajicdusko.androiddomain.model.Ship
 import com.bajicdusko.androiddomain.model.ShipClass
 
@@ -10,6 +11,6 @@ import com.bajicdusko.androiddomain.model.ShipClass
  */
 
 @Entity(tableName = "Ships")
-data class ShipsDb(val shipClass: String, val name: String, val registry: String, val depiction: String) {
+data class ShipsDb(val shipClass: String, @PrimaryKey val name: String, val registry: String, val depiction: String) {
   fun toShip(): Ship = Ship(name, registry, depiction, ShipClass(shipClass))
 }

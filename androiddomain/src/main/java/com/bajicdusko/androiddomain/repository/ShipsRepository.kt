@@ -13,5 +13,5 @@ import com.bajicdusko.androiddomain.model.ShipClass
 interface ShipsRepository {
   fun getShipsPerShipClass(shipClass: ShipClass): LiveData<ResponseWrapper<List<Ship>>>
   fun getAllShips(): LiveData<ResponseWrapper<Map<String, List<Ship>>>>
-  fun getEntriesCount(): Int
+  fun getEntriesCount(): LiveData<Int>
 }

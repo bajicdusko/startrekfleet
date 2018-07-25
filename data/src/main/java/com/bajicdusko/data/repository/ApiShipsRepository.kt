@@ -21,17 +21,19 @@ class ApiShipsRepository constructor(private val starTrekFleetApi: StarTrekFleet
     private val dbShipsRepository: DbShipsRepository) : ShipsRepository {
 
   override fun getShipsPerShipClass(shipClass: ShipClass): LiveData<ResponseWrapper<List<Ship>>> {
-    return if (dbShipsRepository.getEntriesCount() == 0) {
+    return Transformations.switchMap(dbShipsRepository.getEntriesCount()) {
+      if (it == 0) {
 
-      Transformations.map(getAllShips()) { responseWrapper ->
-        if (responseWrapper.error != null) {
-          wrappedData { responseWrapper.data?.get(shipClass.name) ?: emptyList() }
-        } else {
-          wrappedError { responseWrapper.error!! }
+        Transformations.map(getAllShips()) { responseWrapper ->
+          if (responseWrapper.error != null) {
+            wrappedData { responseWrapper.data?.get(shipClass.name) ?: emptyList() }
+          } else {
+            wrappedError { responseWrapper.error!! }
+          }
         }
+      } else {
+        dbShipsRepository.getShipsPerShipClass(shipClass)
       }
-    } else {
-      dbShipsRepository.getShipsPerShipClass(shipClass)
     }
   }
 
@@ -51,7 +53,7 @@ class ApiShipsRepository constructor(private val starTrekFleetApi: StarTrekFleet
     return responseLiveData
   }
 
-  override fun getEntriesCount(): Int {
+  override fun getEntriesCount(): LiveData<Int> {
     throw NotImplementedError()
   }
 }

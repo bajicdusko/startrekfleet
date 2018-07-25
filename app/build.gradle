@@ -1,40 +1,48 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.0"
-    defaultConfig {
-        applicationId "com.bajicdusko.startrekfleet"
-        minSdkVersion 21
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
+  compileSdkVersion 28
+  buildToolsVersion "28.0.0"
+  defaultConfig {
+    applicationId "com.bajicdusko.startrekfleet"
+    minSdkVersion 21
+    targetSdkVersion 28
+    versionCode 1
+    versionName "1.0"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+  }
 
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+  dataBinding {
+    enabled = true
+  }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
+  }
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'androidx.appcompat:appcompat:1.0.0-beta01'
-    compile 'androidx.constraintlayout:constraintlayout:2.0.0-alpha1'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation project(':data')
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+  implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
+  implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha1'
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
+  implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+  kapt 'com.android.databinding:compiler:3.2.0-alpha10'
+
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+  api project(':data')
 }

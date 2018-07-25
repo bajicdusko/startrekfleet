@@ -13,7 +13,7 @@ import androidx.room.Query
 interface ShipsDao {
 
   @Query("SELECT COUNT(*) FROM ships")
-  fun getEntriesCount(): Int
+  fun getEntriesCount(): LiveData<Int>
 
   @Query("SELECT * FROM ships")
   fun getAllShips(): LiveData<List<ShipsDb>>

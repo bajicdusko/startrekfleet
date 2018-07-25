@@ -10,4 +10,5 @@ import com.bajicdusko.androiddomain.model.ShipClass
  */
 interface ShipClassRepository {
   fun getShipClasses(): LiveData<ResponseWrapper<List<ShipClass>>>
+  fun getEntriesCount(): LiveData<Int>
 }

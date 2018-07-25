@@ -46,5 +46,5 @@ class DbShipsRepository constructor(private val shipsDao: ShipsDao) : ShipsRepos
         wrappedData { shipsByShipClass.toMap() }
       }
 
-  override fun getEntriesCount(): Int = shipsDao.getEntriesCount()
+  override fun getEntriesCount(): LiveData<Int> = shipsDao.getEntriesCount()
 }
