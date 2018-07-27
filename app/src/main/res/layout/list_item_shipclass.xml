@@ -29,6 +29,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@{any.name}"
+        android:textColor="@color/grey900"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

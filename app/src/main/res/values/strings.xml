@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">StarTrek Fleet</string>
+  <string name="shipClasses">Ship Classes</string>
 </resources>

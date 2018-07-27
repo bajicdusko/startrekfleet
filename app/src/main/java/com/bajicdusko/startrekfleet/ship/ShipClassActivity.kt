@@ -25,6 +25,11 @@ class ShipClassActivity : AppCompatActivity() {
 
     shipClass = intent.getParcelableExtra<ShipClass>("shipClass")
 
+    supportActionBar?.apply {
+      title = shipClass.name
+      setDisplayHomeAsUpEnabled(true)
+    }
+
     shipsViewModel = ViewModelFactory().create(ShipsViewModel::class.java)
 
     shipsList.apply {

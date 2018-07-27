@@ -13,6 +13,7 @@ import com.bajicdusko.startrekfleet.base.ViewModelFactory
 import com.bajicdusko.startrekfleet.ship.ShipClassActivity
 import com.bajicdusko.startrekfleet.shipclass.ShipClassAdapter
 import com.bajicdusko.startrekfleet.shipclass.ShipClassesViewModel
+import com.bajicdusko.startrekfleet.view.SimpleDividerItemDecoration
 import org.jetbrains.anko.startActivity
 import kotlinx.android.synthetic.main.activity_main.activity_main_shipclasses as shipClassesList
 
@@ -26,6 +27,10 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    supportActionBar.apply {
+      title = getString(R.string.shipClasses)
+    }
+
     shipClassesViewModel = ViewModelFactory().create(ShipClassesViewModel::class.java)
 
     shipClassesList.apply {
@@ -33,6 +38,7 @@ class MainActivity : AppCompatActivity() {
       adapter = ShipClassAdapter().also {
         shipClassesAdapter = it
         it.listener = this@MainActivity
+        addItemDecoration(SimpleDividerItemDecoration(this@MainActivity))
       }
     }
   }
@@ -44,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun renderResult(result: ResponseWrapper<List<ShipClass>>?) {
     result?.let {
-      if (it.error != null){
+      if (it.error != null) {
         onError(it.error!!)
       } else {
         onData(it.data)
@@ -52,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  fun showShips(shipClass: ShipClass){
+  fun showShips(shipClass: ShipClass) {
     startActivity<ShipClassActivity>("shipClass" to shipClass)
   }
 

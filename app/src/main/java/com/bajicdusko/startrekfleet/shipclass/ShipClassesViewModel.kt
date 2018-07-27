@@ -1,9 +1,8 @@
 package com.bajicdusko.startrekfleet.shipclass
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.bajicdusko.androiddomain.ResponseWrapper
+import com.bajicdusko.androiddomain.model.ShipClass
 import com.bajicdusko.data.interactor.GetShipClasses
 
 /**
@@ -12,5 +11,7 @@ import com.bajicdusko.data.interactor.GetShipClasses
  */
 class ShipClassesViewModel(private val getShipClasses: GetShipClasses) : ViewModel() {
 
-  fun onLoad() = getShipClasses.buildUseCase(Unit)
+  fun onLoad(): LiveData<ResponseWrapper<List<ShipClass>>> {
+    return getShipClasses.buildUseCase(Unit)
+  }
 }
