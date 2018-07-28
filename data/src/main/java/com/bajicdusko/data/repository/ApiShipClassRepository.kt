@@ -24,7 +24,9 @@ class ApiShipClassRepository(val api: StarTrekFleetApi,
           val responseLiveData = MutableLiveData<ResponseWrapper<List<ShipClass>>>()
           val appCallback: ApiCallback<List<ShipClass>> = object : ApiCallback<List<ShipClass>> {
             override fun onSuccess(items: List<ShipClass>) {
-              responseLiveData.value = wrappedData { items }
+              dbShipClassRepository.insert(items) {
+                responseLiveData.value = wrappedData { items }
+              }
             }
 
             override fun onFailure(throwable: Throwable) {

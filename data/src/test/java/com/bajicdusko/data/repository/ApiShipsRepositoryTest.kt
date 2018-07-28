@@ -34,9 +34,12 @@ class ApiShipsRepositoryTest {
   @JvmField
   val rule: TestRule = InstantTaskExecutorRule()
 
-  @Mock lateinit var shipClass: ShipClass
-  @Mock lateinit var starTrekFleetApi: StarTrekFleetApi
-  @Mock lateinit var dbShipsRepository: DbShipsRepository
+  @Mock
+  private lateinit var shipClass: ShipClass
+  @Mock
+  private lateinit var starTrekFleetApi: StarTrekFleetApi
+  @Mock
+  private lateinit var dbShipsRepository: DbShipsRepository
 
   @Before
   fun setUp(){
@@ -74,7 +77,7 @@ class ApiShipsRepositoryTest {
 
   @Test
   @Suppress("UNCHECKED_CAST")
-  fun apiShipsRepository_getShipsPerShipClassTest() {
+  fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldFetchAllShipsAndGetShipsPerShipClass() {
 
     /**
      * Method call
@@ -92,7 +95,7 @@ class ApiShipsRepositoryTest {
   }
 
   @Test
-  fun apiShipsRepository_getAllShipsTest(){
+  fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldFetchAllShips(){
 
     /**
      * Method call

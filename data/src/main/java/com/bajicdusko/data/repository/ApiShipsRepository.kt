@@ -23,7 +23,6 @@ class ApiShipsRepository constructor(private val starTrekFleetApi: StarTrekFleet
   override fun getShipsPerShipClass(shipClass: ShipClass): LiveData<ResponseWrapper<List<Ship>>> {
     return Transformations.switchMap(dbShipsRepository.getEntriesCount()) {
       if (it == 0) {
-
         Transformations.map(getAllShips()) { responseWrapper ->
           if (responseWrapper.error != null) {
             wrappedError { responseWrapper.error!! }
@@ -41,7 +40,9 @@ class ApiShipsRepository constructor(private val starTrekFleetApi: StarTrekFleet
     val responseLiveData = MutableLiveData<ResponseWrapper<Map<String, List<Ship>>>>()
     val appCallback: ApiCallback<Map<String, List<Ship>>> = object : ApiCallback<Map<String, List<Ship>>> {
       override fun onSuccess(items: Map<String, List<Ship>>) {
-        responseLiveData.value = wrappedData { items }
+        dbShipsRepository.insertAll(items) {
+          responseLiveData.value = wrappedData { items }
+        }
       }
 
       override fun onFailure(throwable: Throwable) {

@@ -9,8 +9,4 @@ import com.bajicdusko.androiddomain.model.ShipClass
  * GitHub @bajicdusko
  */
 @Entity(tableName = "shipClass")
-data class ShipClassDb(@PrimaryKey val name: String) {
-  fun toShipClass(): ShipClass {
-    return ShipClass(name)
-  }
-}
+data class ShipClassDb(@PrimaryKey val name: String)

@@ -2,6 +2,7 @@ package com.bajicdusko.data.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
 
 /**
@@ -20,4 +21,7 @@ interface ShipsDao {
 
   @Query("SELECT * FROM ships WHERE shipClass = :shipClassName")
   fun getAllShipsPerClass(shipClassName: String): LiveData<List<ShipsDb>>
+
+  @Insert
+  fun insertAll(ships: List<ShipsDb>): List<Long>
 }

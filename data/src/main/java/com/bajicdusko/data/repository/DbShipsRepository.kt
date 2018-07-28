@@ -5,6 +5,7 @@ import androidx.arch.core.util.Function
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.bajicdusko.androiddomain.BackgroundExecutor.Companion.threadPool
 import com.bajicdusko.androiddomain.model.Ship
 import com.bajicdusko.androiddomain.model.ShipClass
 import com.bajicdusko.androiddomain.repository.ShipsRepository
@@ -14,6 +15,7 @@ import com.bajicdusko.data.exception.SourceLiveDataValueEmptyException
 import com.bajicdusko.androiddomain.wrappedData
 import com.bajicdusko.androiddomain.wrappedError
 import com.bajicdusko.data.db.ShipsDb
+import com.bajicdusko.data.mapper.asDbShips
 
 /**
  * Created by Dusko Bajic on 22.07.18.
@@ -48,4 +50,16 @@ class DbShipsRepository constructor(private val shipsDao: ShipsDao) : ShipsRepos
       }
 
   override fun getEntriesCount(): LiveData<Int> = shipsDao.getEntriesCount()
+
+  fun insertAll(items: Map<String, List<Ship>>, afterInsert: () -> Unit) {
+    val ships = mutableListOf<Ship>()
+    items.forEach { shipClassPair ->
+      shipClassPair.value.forEach { ship ->
+        ship.shipClass = ShipClass(shipClassPair.key)
+        ships.add(ship)
+      }
+    }
+
+    threadPool.execute({ shipsDao.insertAll(ships.asDbShips()) }, afterInsert)
+  }
 }

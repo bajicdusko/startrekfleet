@@ -2,6 +2,7 @@ package com.bajicdusko.startrekfleet
 
 import android.app.Application
 import androidx.room.Room
+import com.bajicdusko.androiddomain.BackgroundExecutor
 import com.bajicdusko.data.api.StarTrekFleetApi
 import com.bajicdusko.data.db.FleetDatabase
 import com.bajicdusko.data.db.ShipClassDao
@@ -20,6 +21,7 @@ class StarTrekFleetApp : Application() {
   companion object {
     lateinit var starTrekFleetApi: StarTrekFleetApi
     lateinit var fleetDatabase: FleetDatabase
+
     val shipsDao: ShipsDao by lazy {
       fleetDatabase.shipsDao()
     }

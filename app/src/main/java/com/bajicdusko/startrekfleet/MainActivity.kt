@@ -3,9 +3,7 @@ package com.bajicdusko.startrekfleet
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bajicdusko.androiddomain.ResponseWrapper
 import com.bajicdusko.androiddomain.model.ShipClass
