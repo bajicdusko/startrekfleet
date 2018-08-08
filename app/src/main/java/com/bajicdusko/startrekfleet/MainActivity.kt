@@ -1,7 +1,10 @@
 package com.bajicdusko.startrekfleet
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,16 +15,18 @@ import com.bajicdusko.startrekfleet.ship.ShipClassActivity
 import com.bajicdusko.startrekfleet.shipclass.ShipClassAdapter
 import com.bajicdusko.startrekfleet.shipclass.ShipClassesViewModel
 import com.bajicdusko.startrekfleet.view.SimpleDividerItemDecoration
-import org.jetbrains.anko.startActivity
 import kotlinx.android.synthetic.main.activity_main.activity_main_shipclasses as shipClassesList
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
 
   val tag = this::class.java.simpleName
-  private lateinit var shipClassesViewModel: ShipClassesViewModel
-  private lateinit var shipClassesAdapter: ShipClassAdapter
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+  @VisibleForTesting(otherwise = PRIVATE)
+  internal lateinit var shipClassesViewModel: ShipClassesViewModel
+  @VisibleForTesting(otherwise = PRIVATE)
+  internal lateinit var shipClassesAdapter: ShipClassAdapter
+
+  public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
@@ -29,7 +34,10 @@ class MainActivity : AppCompatActivity() {
       title = getString(R.string.shipClasses)
     }
 
-    shipClassesViewModel = ViewModelFactory().create(ShipClassesViewModel::class.java)
+    shipClassesViewModel = ViewModelFactory(
+        this@MainActivity.applicationContext as StarTrekFleetApp).create(
+        ShipClassesViewModel::class.java
+    )
 
     shipClassesList.apply {
       layoutManager = LinearLayoutManager(this@MainActivity)
@@ -41,12 +49,13 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  override fun onStart() {
+  public override fun onStart() {
     super.onStart()
     shipClassesViewModel.onLoad().observe(this, Observer { renderResult(it) })
   }
 
-  private fun renderResult(result: ResponseWrapper<List<ShipClass>>?) {
+  @VisibleForTesting(otherwise = PRIVATE)
+  internal fun renderResult(result: ResponseWrapper<List<ShipClass>>?) {
     result?.let {
       if (it.error != null) {
         onError(it.error!!)
@@ -57,7 +66,9 @@ class MainActivity : AppCompatActivity() {
   }
 
   fun showShips(shipClass: ShipClass) {
-    startActivity<ShipClassActivity>("shipClass" to shipClass)
+    val intent = Intent(this, ShipClassActivity::class.java)
+    intent.putExtra("shipClass", shipClass)
+    startActivity(intent)
   }
 
   private fun onData(data: List<ShipClass>?) {

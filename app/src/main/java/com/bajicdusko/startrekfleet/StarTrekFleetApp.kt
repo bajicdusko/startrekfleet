@@ -2,7 +2,6 @@ package com.bajicdusko.startrekfleet
 
 import android.app.Application
 import androidx.room.Room
-import com.bajicdusko.androiddomain.BackgroundExecutor
 import com.bajicdusko.data.api.StarTrekFleetApi
 import com.bajicdusko.data.db.FleetDatabase
 import com.bajicdusko.data.db.ShipClassDao
@@ -16,20 +15,12 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by Dusko Bajic on 24.07.18.
  * GitHub @bajicdusko
  */
+
 class StarTrekFleetApp : Application() {
 
-  companion object {
-    lateinit var starTrekFleetApi: StarTrekFleetApi
-    lateinit var fleetDatabase: FleetDatabase
-
-    val shipsDao: ShipsDao by lazy {
-      fleetDatabase.shipsDao()
-    }
-
-    val shipClassDao: ShipClassDao by lazy {
-      fleetDatabase.shipClassDao()
-    }
-  }
+  lateinit var starTrekFleetApi: StarTrekFleetApi
+  lateinit var shipsDao: ShipsDao
+  lateinit var shipClassDao: ShipClassDao
 
   override fun onCreate() {
     super.onCreate()
@@ -53,6 +44,8 @@ class StarTrekFleetApp : Application() {
   }
 
   private fun initDb() {
-    fleetDatabase = Room.databaseBuilder(this, FleetDatabase::class.java, "fleet").build()
+    val fleetDatabase = Room.databaseBuilder(this, FleetDatabase::class.java, "fleet").build()
+    shipsDao = fleetDatabase.shipsDao()
+    shipClassDao = fleetDatabase.shipClassDao()
   }
 }

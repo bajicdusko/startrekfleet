@@ -9,6 +9,7 @@ import com.bajicdusko.androiddomain.ResponseWrapper
 import com.bajicdusko.androiddomain.model.Ship
 import com.bajicdusko.androiddomain.model.ShipClass
 import com.bajicdusko.startrekfleet.R
+import com.bajicdusko.startrekfleet.StarTrekFleetApp
 import com.bajicdusko.startrekfleet.base.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_ship_class.activity_ship_class_list as shipsList
 
@@ -30,7 +31,7 @@ class ShipClassActivity : AppCompatActivity() {
       setDisplayHomeAsUpEnabled(true)
     }
 
-    shipsViewModel = ViewModelFactory().create(ShipsViewModel::class.java)
+    shipsViewModel = ViewModelFactory(this@ShipClassActivity.applicationContext as StarTrekFleetApp).create(ShipsViewModel::class.java)
 
     shipsList.apply {
       layoutManager = LinearLayoutManager(this@ShipClassActivity)

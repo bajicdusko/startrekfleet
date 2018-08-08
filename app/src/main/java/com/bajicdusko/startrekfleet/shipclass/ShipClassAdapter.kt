@@ -4,7 +4,7 @@ import com.bajicdusko.androiddomain.model.ShipClass
 import com.bajicdusko.startrekfleet.R
 import com.bajicdusko.startrekfleet.base.BaseListAdapter
 
-class ShipClassAdapter : BaseListAdapter() {
+open class ShipClassAdapter : BaseListAdapter() {
 
   var listener: Any? = null
 

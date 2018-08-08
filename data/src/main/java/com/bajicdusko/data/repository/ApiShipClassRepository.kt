@@ -1,5 +1,6 @@
 package com.bajicdusko.data.repository
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -16,7 +17,8 @@ import com.bajicdusko.data.api.execute
  * Created by Dusko Bajic on 25.07.18.
  * GitHub @bajicdusko
  */
-class ApiShipClassRepository(val api: StarTrekFleetApi,
+@VisibleForTesting
+open class ApiShipClassRepository(val api: StarTrekFleetApi,
     val dbShipClassRepository: DbShipClassRepository) : ShipClassRepository {
   override fun getShipClasses(): LiveData<ResponseWrapper<List<ShipClass>>> =
       Transformations.switchMap(dbShipClassRepository.getEntriesCount()) {
