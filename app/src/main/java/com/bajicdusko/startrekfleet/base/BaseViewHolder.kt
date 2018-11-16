@@ -6,7 +6,7 @@ import com.bajicdusko.startrekfleet.BR
 
 class BaseViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
 
-  fun bind(any: Any, listeners: Any?){
+  fun bind(any: Any, listeners: Any?) {
     binding.setVariable(BR.any, any)
 
     listeners?.let {

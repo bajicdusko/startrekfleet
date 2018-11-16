@@ -5,14 +5,14 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
   compileSdkVersion 28
-  buildToolsVersion "28.0.0"
+  buildToolsVersion "28.0.2"
   defaultConfig {
     applicationId "com.bajicdusko.startrekfleet"
     minSdkVersion 21
     targetSdkVersion 28
     versionCode 1
     versionName "1.0"
-    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "com.bajicdusko.startrekfleet.StarTrekFleetInstrumentationRunner"
   }
 
   dataBinding {
@@ -23,8 +23,13 @@ android {
   targetCompatibility = "1.8"
 
   buildTypes {
+    debug {
+      debuggable true
+    }
+
     release {
       minifyEnabled false
+      debuggable false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
@@ -39,26 +44,29 @@ android {
 
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
-  implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-  implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha1'
-
+  implementation "androidx.appcompat:appcompat:$androidx_version"
+  implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+  implementation 'com.jakewharton.timber:timber:4.7.1'
   testImplementation 'junit:junit:4.12'
-  testImplementation "org.robolectric:robolectric:3.8"
-  testImplementation "org.mockito:mockito-core:2.7.19"
-  testImplementation "org.mockito:mockito-all:1.10.19"
+  testImplementation 'org.robolectric:robolectric:3.8'
+  testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation "android.arch.core:core-testing:$lifecycle_version"
-  androidTestImplementation 'org.mockito:mockito-android:2.19.1'
-
+  androidTestImplementation "android.arch.core:core-testing:$lifecycle_version"
+  androidTestImplementation "org.mockito:mockito-android:$mockito_android"
+  androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
+  androidTestImplementation 'androidx.test:rules:1.1.0-beta01'
   androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0-alpha4', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
-
+  androidTestImplementation('androidx.test.espresso:espresso-contrib:+') {
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+    exclude group: 'com.android.support', module: 'support-v4'
+    exclude module: 'recyclerview-v7'
+  }
+  androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
   implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
   kapt 'com.android.databinding:compiler:3.2.0-alpha10'
-
   implementation "org.jetbrains.anko:anko-commons:$anko_version"
-
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
   api project(':data')
 }

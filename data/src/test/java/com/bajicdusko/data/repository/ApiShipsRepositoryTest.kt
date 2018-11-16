@@ -1,32 +1,28 @@
 package com.bajicdusko.data.repository
 
-import androidx.lifecycle.MutableLiveData
-import com.bajicdusko.androiddomain.model.ShipClass
-import com.bajicdusko.data.api.StarTrekFleetApi
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.mockito.Mockito
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
 import com.bajicdusko.androiddomain.model.Ship
-import com.bajicdusko.data.api.wholeCollectionUrl
-import com.google.gson.Gson
-import okhttp3.*
-import org.junit.*
+import com.bajicdusko.androiddomain.model.ShipClass
+import com.bajicdusko.data.anyNotNull
+import com.bajicdusko.data.api.StarTrekFleetApi
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestRule
+import org.junit.runner.RunWith
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-
 
 /**
- * Created by Dusko Bajic on 25.07.18.
+ * Created by Dusko Bajic on 05.09.18.
  * GitHub @bajicdusko
  */
-
 @RunWith(MockitoJUnitRunner::class)
 class ApiShipsRepositoryTest {
 
@@ -34,80 +30,69 @@ class ApiShipsRepositoryTest {
   @JvmField
   val rule: TestRule = InstantTaskExecutorRule()
 
-  @Mock
-  private lateinit var shipClass: ShipClass
-  @Mock
-  private lateinit var starTrekFleetApi: StarTrekFleetApi
-  @Mock
-  private lateinit var dbShipsRepository: DbShipsRepository
+  @Mock private lateinit var starTrekFleetApiMock: StarTrekFleetApi
+  @Mock private lateinit var dbShipsRepositoryMock: DbShipsRepository
+  @Mock private lateinit var mockedCall: Call<Map<String, List<Ship>>>
 
-  @Before
-  fun setUp(){
+  private val shipClassName = "Akira"
+  private val shipClassMock = ShipClass(shipClassName)
 
-    Mockito.`when`(shipClass.name).thenReturn("Akira")
-
-    val mockedCall: Call<Map<String, List<Ship>>> = Mockito.mock(
-        Call::class.java
-    ) as Call<Map<String, List<Ship>>>
-
-    Mockito.`when`(
-        starTrekFleetApi.getWholeCollection(wholeCollectionUrl)
-    ).thenReturn(mockedCall)
+  @Before fun setUp() {
 
     val wholeCollection: Map<String, List<Ship>> = mapOf(
-        "Akira" to listOf(
-            Ship("USS Discovery", "NCC-1031", "Test ship", shipClass),
-            Ship("USS Enterprise", "NCC-1071", "Explorer", shipClass)
-        ),
-        "Archer" to listOf(
-            Ship("USS Defiant", "NCC-1031", "Test ship", shipClass)
+        shipClassName to listOf(
+            Ship("USS Discovery", "NCC-1031", "Test ship", shipClassMock),
+            Ship("USS Enterprise", "NCC-1071", "Explorer", shipClassMock)
         )
     )
 
     Mockito.doAnswer {
-      val callback = it.getArgument<Callback<Map<String, List<Ship>>>>(0)
+      val callback: Callback<Map<String, List<Ship>>> = it.getArgument(0)
       callback.onResponse(mockedCall, Response.success(wholeCollection))
-    }.`when`(mockedCall).enqueue(
-        Mockito.any(Callback::class.java) as Callback<Map<String, List<Ship>>>?)
+    }.`when`(mockedCall).enqueue(anyNotNull())
 
-    Mockito.`when`(dbShipsRepository.getEntriesCount()).thenReturn(MutableLiveData<Int>().also {
-      it.value = 0
-    })
+    Mockito.doReturn(mockedCall).`when`(starTrekFleetApiMock).getWholeCollection(
+        Mockito.anyString()
+    )
+
+    //Mocking the Database insert
+    Mockito.doAnswer {
+      val afterInsert: () -> Unit = it.getArgument(1)
+      afterInsert()
+    }.`when`(dbShipsRepositoryMock).insertAll(Mockito.anyMap(), anyNotNull())
+
   }
 
-  @Test
-  @Suppress("UNCHECKED_CAST")
-  fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldFetchAllShipsAndGetShipsPerShipClass() {
+  @Test fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldGetShipsPerShipClass() {
 
-    /**
-     * Method call
-     */
-    val apiShipsRepository = ApiShipsRepository(starTrekFleetApi, dbShipsRepository)
-    val shipsPerShipClassLiveData = apiShipsRepository.getShipsPerShipClass(shipClass)
+    //Mocking database entriesCount
+    Mockito.doReturn(MutableLiveData<Int>().also {
+      it.value = 0
+    }).`when`(dbShipsRepositoryMock).getEntriesCount()
 
-    /**
-     * Assertion
-     */
-    shipsPerShipClassLiveData.observeForever {
-      Assert.assertEquals(it!!.data!!.size, 2)
-      Assert.assertEquals(it!!.data!![1].name, "USS Enterprise")
+    //Test
+    val apiShipsRepository = ApiShipsRepository(starTrekFleetApiMock, dbShipsRepositoryMock)
+    val shipsPerShipClass = apiShipsRepository.getShipsPerShipClass(shipClassMock)
+
+    shipsPerShipClass.observeForever {
+      Assert.assertEquals(2, it.data?.size ?: 0)
     }
   }
 
-  @Test
-  fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldFetchAllShips(){
+  @Test fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldGetAllShips() {
 
-    /**
-     * Method call
-     */
-    val apiShipsRepository = ApiShipsRepository(starTrekFleetApi, dbShipsRepository)
-    val allShipsLiveData = apiShipsRepository.getAllShips()
+    //Test
+    val apiShipsRepository = ApiShipsRepository(starTrekFleetApiMock, dbShipsRepositoryMock)
+    val allShips = apiShipsRepository.getAllShips()
 
-    /**
-     * Assertion
-     */
-    Assert.assertEquals(allShipsLiveData.value!!.data!!.size, 2)
-    Assert.assertEquals(allShipsLiveData.value!!.data!!["Archer"]!!.size, 1)
-    Assert.assertEquals(allShipsLiveData.value!!.data!!["Archer"]!![0].name, "USS Defiant")
+    allShips.observeForever {
+      Assert.assertEquals(1, it.data?.size ?: 0)
+    }
+  }
+
+  @Test(expected = NotImplementedError::class)
+  fun apiShipsRepository_givenThatDatabaseIsEmpty_shouldGetEntriesCount() {
+    val apiShipsRepository = ApiShipsRepository(starTrekFleetApiMock, dbShipsRepositoryMock)
+    apiShipsRepository.getEntriesCount()
   }
 }

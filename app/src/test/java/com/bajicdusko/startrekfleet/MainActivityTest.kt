@@ -1,6 +1,5 @@
 package com.bajicdusko.startrekfleet
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.FragmentController
@@ -24,7 +23,7 @@ import org.mockito.MockitoAnnotations
  * GitHub @bajicdusko
  */
 
-class ShipClassesTest {
+class MainActivityTest {
 
   @JvmField @Rule val taskExecutorRule = InstantTaskExecutorRule()
 
@@ -40,7 +39,7 @@ class ShipClassesTest {
   fun mainActivity_shouldDisplayShipClasses() {
 
     val mainActivity = Mockito.spy(MainActivity()).also {
-      it.mockActivityInternals()
+      it.mockActivityInternals(appCompatDelegateMock, fragmentControllerMock)
     }
 
     val getShipClasses = Mockito.mock(GetShipClasses::class.java)
@@ -51,26 +50,10 @@ class ShipClassesTest {
     val responseWrapper = wrappedData { emptyList<ShipClass>() }
     shipClassesLiveData.value  = responseWrapper
 
-    Mockito.`when`(shipClassesViewModelMock.onLoad()).thenReturn(shipClassesLiveData)
+    Mockito.`when`(shipClassesViewModelMock.observe()).thenReturn(shipClassesLiveData)
 
     mainActivity.onStart()
 
     Mockito.verify(mainActivity).renderResult(Matchers.any(responseWrapper::class.java))
-  }
-
-  private fun AppCompatActivity.mockActivityInternals() {
-    Class.forName(
-        "androidx.appcompat.app.AppCompatActivity"
-    ).getDeclaredField("mDelegate").apply {
-      isAccessible = true
-      set(this@mockActivityInternals, appCompatDelegateMock)
-    }
-
-    Class.forName(
-        "androidx.fragment.app.FragmentActivity"
-    ).getDeclaredField("mFragments").apply {
-      isAccessible = true
-      set(this@mockActivityInternals, fragmentControllerMock)
-    }
   }
 }

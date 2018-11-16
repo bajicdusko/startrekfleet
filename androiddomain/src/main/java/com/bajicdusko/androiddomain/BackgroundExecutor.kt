@@ -1,8 +1,9 @@
 package com.bajicdusko.androiddomain
 
-import android.os.Handler
-import android.os.Looper
-import java.util.concurrent.*
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by Dusko Bajic on 28.07.18.
@@ -17,27 +18,31 @@ class BackgroundExecutor private constructor() {
     val threadPool: BackgroundExecutor by lazy {
       BackgroundExecutor()
     }
-  }
 
-  private val executorService = ThreadPoolExecutor(
-      availableProcessors,
-      availableProcessors * 2,
-      10,
-      TimeUnit.SECONDS,
-      LinkedBlockingQueue<Runnable>(),
-      SimpleThreadFactory()
-  )
+    var executorService = initThreadPoolExecutor()
+
+    fun initThreadPoolExecutor(): ThreadPoolExecutor {
+      return ThreadPoolExecutor(
+          availableProcessors,
+          availableProcessors * 2,
+          10,
+          TimeUnit.SECONDS,
+          LinkedBlockingQueue<Runnable>(),
+          SimpleThreadFactory()
+      )
+    }
+  }
 
   fun execute(fn: () -> Unit, callback: (() -> Unit)?) {
     executorService.execute {
       fn()
       callback?.let {
-        Handler(Looper.getMainLooper()).post(it)
+        MainLooperExecutor().execute(it)
       }
     }
   }
 }
 
-private class SimpleThreadFactory : ThreadFactory {
+class SimpleThreadFactory : ThreadFactory {
   override fun newThread(p0: Runnable?): Thread = Thread(p0)
 }

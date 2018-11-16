@@ -15,8 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by Dusko Bajic on 24.07.18.
  * GitHub @bajicdusko
  */
-
-class StarTrekFleetApp : Application() {
+open class StarTrekFleetApp : Application() {
 
   lateinit var starTrekFleetApi: StarTrekFleetApi
   lateinit var shipsDao: ShipsDao

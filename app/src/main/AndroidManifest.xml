@@ -22,6 +22,8 @@
     <activity
         android:name=".ship.ShipClassActivity"
         android:parentActivityName=".MainActivity"/>
+
+    <service android:name=".DownloadService"/>
   </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.bajicdusko.startrekfleet
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -15,11 +16,13 @@ import com.bajicdusko.startrekfleet.ship.ShipClassActivity
 import com.bajicdusko.startrekfleet.shipclass.ShipClassAdapter
 import com.bajicdusko.startrekfleet.shipclass.ShipClassesViewModel
 import com.bajicdusko.startrekfleet.view.SimpleDividerItemDecoration
+import kotlinx.android.synthetic.main.activity_main.activity_main_pullToRefresh as pullToRefresh
 import kotlinx.android.synthetic.main.activity_main.activity_main_shipclasses as shipClassesList
 
+@SuppressLint("LogNotTimber")
 open class MainActivity : AppCompatActivity() {
 
-  val tag = this::class.java.simpleName
+  val tag: String = this::class.java.simpleName
 
   @VisibleForTesting(otherwise = PRIVATE)
   internal lateinit var shipClassesViewModel: ShipClassesViewModel
@@ -47,15 +50,25 @@ open class MainActivity : AppCompatActivity() {
         addItemDecoration(SimpleDividerItemDecoration(this@MainActivity))
       }
     }
+
+    pullToRefresh.setOnRefreshListener {
+      shipClassesViewModel.refresh()
+    }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    Log.d(tag, "$this destroyed")
   }
 
   public override fun onStart() {
     super.onStart()
-    shipClassesViewModel.onLoad().observe(this, Observer { renderResult(it) })
+    shipClassesViewModel.observe(this, Observer { renderResult(it) })
   }
 
   @VisibleForTesting(otherwise = PRIVATE)
   internal fun renderResult(result: ResponseWrapper<List<ShipClass>>?) {
+    pullToRefresh.isRefreshing = false
     result?.let {
       if (it.error != null) {
         onError(it.error!!)

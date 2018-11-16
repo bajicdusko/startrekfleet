@@ -11,6 +11,6 @@ import com.bajicdusko.androiddomain.model.ShipClass
  */
 
 @Entity(tableName = "Ships")
-data class ShipsDb(val shipClass: String, @PrimaryKey val name: String, val registry: String, val depiction: String) {
+data class ShipsDb(@PrimaryKey(autoGenerate = true) val id: Long? = null, val shipClass: String, val name: String, val registry: String, val depiction: String) {
   fun toShip(): Ship = Ship(name, registry, depiction, ShipClass(shipClass))
 }

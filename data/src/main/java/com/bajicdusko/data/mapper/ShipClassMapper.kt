@@ -30,7 +30,12 @@ fun List<ShipClassDb>.asShipClasses(): List<ShipClass> {
 }
 
 fun ShipsDb.asShip() = Ship(name, registry, depiction, ShipClass(shipClass))
-fun Ship.asShipDb() = ShipsDb(shipClass.name, name, designation, depiction)
+fun Ship.asShipDb() = ShipsDb(
+    shipClass = shipClass.name,
+    name = name,
+    registry = designation,
+    depiction = depiction
+)
 
 fun List<Ship>.asDbShips(): List<ShipsDb> {
   val shipsDb = mutableListOf<ShipsDb>()

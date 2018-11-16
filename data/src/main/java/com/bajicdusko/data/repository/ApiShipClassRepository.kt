@@ -20,6 +20,7 @@ import com.bajicdusko.data.api.execute
 @VisibleForTesting
 open class ApiShipClassRepository(val api: StarTrekFleetApi,
     val dbShipClassRepository: DbShipClassRepository) : ShipClassRepository {
+
   override fun getShipClasses(): LiveData<ResponseWrapper<List<ShipClass>>> =
       Transformations.switchMap(dbShipClassRepository.getEntriesCount()) {
         if (it == 0) {

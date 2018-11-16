@@ -2,6 +2,8 @@ package com.bajicdusko.startrekfleet.ship
 
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,9 +18,10 @@ import kotlinx.android.synthetic.main.activity_ship_class.activity_ship_class_li
 class ShipClassActivity : AppCompatActivity() {
 
   val tag = this::class.java.simpleName
-  private lateinit var shipsViewModel: ShipsViewModel
+
+  @VisibleForTesting(otherwise = PRIVATE) lateinit var shipsViewModel: ShipsViewModel
+  @VisibleForTesting(otherwise = PRIVATE) lateinit var shipClass: ShipClass
   private lateinit var shipsAdapter: ShipsAdapter
-  private lateinit var shipClass: ShipClass
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -41,12 +44,13 @@ class ShipClassActivity : AppCompatActivity() {
     }
   }
 
-  override fun onStart() {
+  public override fun onStart() {
     super.onStart()
     shipsViewModel.loadShipsPerShipClass(shipClass).observe(this, Observer { onResult(it) })
   }
 
-  private fun onResult(shipsPerClass: ResponseWrapper<List<Ship>>?) {
+  @VisibleForTesting(otherwise = PRIVATE)
+  internal fun onResult(shipsPerClass: ResponseWrapper<List<Ship>>?) {
     shipsPerClass?.let {
       if (it.error != null) {
         onError(it.error!!)
@@ -56,7 +60,8 @@ class ShipClassActivity : AppCompatActivity() {
     }
   }
 
-  private fun onData(ships: List<Ship>?) {
+  @VisibleForTesting(otherwise = PRIVATE)
+  internal fun onData(ships: List<Ship>?) {
     ships?.let {
       shipsAdapter.onData(ships)
     } ?: shipsAdapter.onClear()
