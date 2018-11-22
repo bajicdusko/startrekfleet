@@ -15,8 +15,7 @@ import com.bajicdusko.data.interactor.GetShipClasses
 open class ShipClassesViewModel(private val getShipClasses: GetShipClasses) : ViewModel() {
 
   private val mediatorLiveData: MediatorLiveData<ResponseWrapper<List<ShipClass>>> = MediatorLiveData()
-  private var shipClassesLiveData
-      = getShipClasses.buildUseCase(Unit)
+  private var shipClassesLiveData = getShipClasses.buildUseCase(Unit)
 
   init {
     addShipClassesSource()
@@ -28,11 +27,12 @@ open class ShipClassesViewModel(private val getShipClasses: GetShipClasses) : Vi
     }
   }
 
-  fun observe(lifecycleOwner: LifecycleOwner, observer: Observer<ResponseWrapper<List<ShipClass>>>) {
+  fun observe(lifecycleOwner: LifecycleOwner,
+      observer: Observer<ResponseWrapper<List<ShipClass>>>) {
     mediatorLiveData.observe(lifecycleOwner, observer)
   }
 
-  fun refresh(){
+  fun refresh() {
     mediatorLiveData.removeSource(shipClassesLiveData)
     addShipClassesSource()
   }

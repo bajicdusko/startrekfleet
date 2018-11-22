@@ -34,7 +34,7 @@ open class StarTrekFleetApp : Application() {
         .build()
 
     val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://test.com")
+        .baseUrl("https://github.com/bajicdusko/startrekfleet/tree/master/data/jsons/")
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()
